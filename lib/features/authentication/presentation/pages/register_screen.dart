@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:se7ety/core/components/buttons/main_button.dart';
 import 'package:se7ety/core/constants/images.dart';
 import 'package:se7ety/core/functions/app_regex.dart';
 import 'package:se7ety/core/functions/show_dialoges.dart';
-
 import 'package:se7ety/core/routes/navigation.dart';
 import 'package:se7ety/core/routes/routes.dart';
 import 'package:se7ety/core/utils/colors.dart';
@@ -52,13 +50,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         listener: (context, state) {
           if (state is AuthLoasdingState) {
             showLoadingDialog(context: context);
-          }
-          if (state is AuthSuccessState) {
+          } else if (state is AuthSuccessState) {
             if (Navigator.canPop(context)) {
               pop(context);
+              log("Registration Successful");
             }
-            pop(context);
-            log("Registration Successful");
           } else if (state is AuthErrorState) {
             pop(context);
             showDialoges(context: context, message: state.message);
@@ -157,9 +153,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Gap(50),
                     MainButton(
                       onPressed: () async {
+                         log(widget.userType.toString());
                         if (bloc.formKey.currentState!.validate()) {
                           bloc.add(
                             RegisterEvent(
+                              userType: widget.userType,
                               email: bloc.emailController.text,
                               password: bloc.passwordCController.text,
                               username: bloc.userNameController.text,
@@ -182,6 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           TextButton(
                             onPressed: () {
+                             
                               pushWithReplacment(
                                 context: context,
                                 route: AppRouter.login,

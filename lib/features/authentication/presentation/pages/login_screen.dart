@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -144,10 +146,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed: () {
+                              log(widget.userType.toString());
                               pushWithReplacment(
                                 context: context,
                                 route: AppRouter.register,
                                 extra: widget.userType,
+                                
                               );
                             },
                             child: Text(
