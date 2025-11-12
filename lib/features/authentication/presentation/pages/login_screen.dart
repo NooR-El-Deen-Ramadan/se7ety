@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -7,7 +6,6 @@ import 'package:se7ety/core/components/buttons/main_button.dart';
 import 'package:se7ety/core/constants/images.dart';
 import 'package:se7ety/core/functions/app_regex.dart';
 import 'package:se7ety/core/functions/show_dialoges.dart';
-
 import 'package:se7ety/core/routes/navigation.dart';
 import 'package:se7ety/core/routes/routes.dart';
 import 'package:se7ety/core/utils/colors.dart';
@@ -49,12 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: BlocListener<AuthBloc, AuthStates>(
         listener: (context, state) {
-          if (state is AuthLoasdingState) {
+          if (state is AuthLoadingState) {
             showLoadingDialog(context: context);
           } else if (state is AuthSuccessState) {
-            if (Navigator.canPop(context)) {
-              pop(context);
-              log("Registration Successful");
+            if (state.userType == UserTypeEnum.doctor) {
+              //push to doctor home
+            } else {
+              //push to patient home
             }
           } else if (state is AuthErrorState) {
             pop(context);

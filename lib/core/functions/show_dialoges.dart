@@ -34,7 +34,7 @@ void showDialoges({
   );
 }
 
-void showLoadingDialog({required BuildContext context}) {
+void showLoadingDialog( {required BuildContext context}) {
   showDialog(
     barrierDismissible: true,
     context: context,

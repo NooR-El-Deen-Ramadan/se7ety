@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:se7ety/features/authentication/data/models/user_type_enum.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:se7ety/features/authentication/presentation/pages/doctor_regesteration.dart';
 import 'package:se7ety/features/authentication/presentation/pages/login_screen.dart';
 import 'package:se7ety/features/authentication/presentation/pages/register_screen.dart';
 import 'package:se7ety/features/intro/onboarding/presentation/pages/onboarding_screen.dart';
@@ -18,8 +19,8 @@ class AppRouter {
 
   static const String login = "/login";
   static const String register = "/register";
-  static const String forgetPassword = "/forgetPassword";
-  static const String otp = "/otp";
+  static const String doctorRegistration = "/doctorRegistration";
+
   static const String changePassword = "/changePassword";
   static const String passwordResetSuccess = "/passwordResetSuccess";
   static const String main = "/main";
@@ -30,6 +31,7 @@ class AppRouter {
 
   static final routes = GoRouter(
     navigatorKey: navigatorKey,
+
     routes: [
       GoRoute(path: splash, builder: (context, state) => const SplashScreen()),
       GoRoute(
@@ -52,10 +54,13 @@ class AppRouter {
         ),
       ),
 
-      //     GoRoute(
-      //       path: forgetPassword,
-      //       builder: (context, state) => ForgetPasswordScreen(),
-      //     ),
+      GoRoute(
+        path: doctorRegistration,
+        builder: (context, state) => BlocProvider(
+          create: (context) => AuthBloc(),
+          child: DoctorRegistrationScreen(),
+        ),
+      ),
       //     GoRoute(path: otp, builder: (context, state) => OtpScreen()),
       //     GoRoute(
       //       path: changePassword,

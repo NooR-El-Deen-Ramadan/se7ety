@@ -11,5 +11,6 @@ class AppImages {
   //png
   static const String splashPNG = 'assets/images/splash.png';
   static const String logoPNG = 'assets/images/app_logo.png';
+  static const String emptyDocPNG = 'assets/images/empty_doc.png';
 
 }

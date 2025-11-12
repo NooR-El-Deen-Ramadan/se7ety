@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:se7ety/core/utils/colors.dart';
 import 'package:se7ety/core/utils/fonts.dart';
 
 // ignore: must_be_immutable
@@ -18,6 +18,7 @@ class MainTextFormField extends StatefulWidget {
     this.suffixIcon,
     this.onTap,
     this.inputFormatters,
+    this.keyboardType 
   });
   bool ispassword = false;
   final Function()? onTap;
@@ -28,6 +29,7 @@ class MainTextFormField extends StatefulWidget {
   String? textFormFieldText;
   final TextEditingController controller;
   final List<TextInputFormatter>? inputFormatters;
+  TextInputType? keyboardType;
 
   @override
   State<MainTextFormField> createState() => _MainTextFormFieldState();
@@ -46,7 +48,8 @@ class _MainTextFormFieldState extends State<MainTextFormField> {
       validator: widget.validator,
       controller: widget.controller,
       maxLines: widget.maxTextLines,
-      style: AppFontStyles.title,
+      keyboardType: widget.keyboardType,
+      style: AppFontStyles.title.copyWith(color: AppColors.blackColor),
       decoration: InputDecoration(
         suffixIcon:
             widget.suffixIcon ??
@@ -64,9 +67,10 @@ class _MainTextFormFieldState extends State<MainTextFormField> {
                     ),
                   )
                 : null),
+
         hint: Text(
           widget.textFormFieldText ?? "",
-          style: AppFontStyles.title,
+          style: AppFontStyles.title.copyWith(color: AppColors.greyColor),
         ),
       ),
     );

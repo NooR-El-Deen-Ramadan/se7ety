@@ -48,12 +48,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: BlocListener<AuthBloc, AuthStates>(
         listener: (context, state) {
-          if (state is AuthLoasdingState) {
+          if (state is AuthLoadingState) {
             showLoadingDialog(context: context);
           } else if (state is AuthSuccessState) {
-            if (Navigator.canPop(context)) {
-              pop(context);
-              log("Registration Successful");
+            if (state.userType == UserTypeEnum.doctor) {
+              //push to doctor home
+            } else {
+              //push to patient home
             }
           } else if (state is AuthErrorState) {
             pop(context);
@@ -153,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Gap(50),
                     MainButton(
                       onPressed: () async {
-                         log(widget.userType.toString());
+                        log(widget.userType.toString());
                         if (bloc.formKey.currentState!.validate()) {
                           bloc.add(
                             RegisterEvent(
@@ -180,7 +181,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                             
                               pushWithReplacment(
                                 context: context,
                                 route: AppRouter.login,

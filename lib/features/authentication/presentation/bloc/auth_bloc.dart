@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:se7ety/features/authentication/data/models/specializations.dart';
 import 'package:se7ety/features/authentication/data/repo/auth_repo.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_events.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_states.dart';
@@ -18,10 +19,20 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
   final emailController = TextEditingController();
   final passwordCController = TextEditingController();
   final userNameController = TextEditingController();
+
+  final bioController = TextEditingController();
+  final phone1Controller = TextEditingController();
+  final phone2Controller = TextEditingController();
+  final addressController = TextEditingController();
+  final openHourController = TextEditingController();
+  final closeHourController = TextEditingController();
+  String specialization = specializations[0];
+  String imageUrl = '';
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   register(RegisterEvent event, Emitter<AuthStates> emit) async {
-    emit(AuthLoasdingState());
+    emit(AuthLoadingState());
     var result = await AuthRepo.register(
       userName: userNameController.text,
       email: emailController.text,
@@ -34,13 +45,13 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
         emit(AuthErrorState(error));
       },
       (success) {
-        emit(AuthSuccessState());
+        emit(AuthSuccessState(success));
       },
     );
   }
 
   login(LoginEvent event, Emitter<AuthStates> emit) async {
-    emit(AuthLoasdingState());
+    emit(AuthLoadingState());
     var result = await AuthRepo.login(
       email: emailController.text,
       password: passwordCController.text,
@@ -50,7 +61,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
         emit(AuthErrorState(error));
       },
       (success) {
-        emit(AuthSuccessState());
+        emit(AuthSuccessState(success));
       },
     );
   }
