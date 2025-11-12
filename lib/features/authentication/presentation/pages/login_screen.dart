@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:se7ety/core/components/buttons/main_button.dart';
 import 'package:se7ety/core/constants/images.dart';
 import 'package:se7ety/core/functions/app_regex.dart';
+import 'package:se7ety/core/functions/show_dialoges.dart';
 
 import 'package:se7ety/core/routes/navigation.dart';
 import 'package:se7ety/core/routes/routes.dart';
@@ -13,6 +14,7 @@ import 'package:se7ety/core/utils/colors.dart';
 import 'package:se7ety/core/utils/fonts.dart';
 import 'package:se7ety/features/authentication/data/models/user_type_enum.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:se7ety/features/authentication/presentation/bloc/auth_events.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_states.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -32,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-     var bloc = context.read<AuthBloc>();
+    var bloc = context.read<AuthBloc>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.backGroundColor,
@@ -46,7 +48,20 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
       body: BlocListener<AuthBloc, AuthStates>(
-        listener: (context, state) => AuthBloc(),
+        listener: (context, state) {
+          if (state is AuthLoasdingState) {
+            showLoadingDialog(context: context);
+          } else if (state is AuthSuccessState) {
+            if (Navigator.canPop(context)) {
+              pop(context);
+              log("Registration Successful");
+            }
+          } else if (state is AuthErrorState) {
+            pop(context);
+            showDialoges(context: context, message: state.message);
+            log("Registration Failed: ${state.message}");
+          }
+        },
         child: Center(
           child: SingleChildScrollView(
             child: Form(
@@ -129,7 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Gap(20),
                     MainButton(
                       onPressed: () async {
-                        if (bloc.formKey.currentState!.validate()) {}
+                        if (bloc.formKey.currentState!.validate()) {
+                          bloc.add(
+                            LoginEvent(
+                              email: bloc.emailController.text,
+                              password: bloc.passwordCController.text,
+                              userType: widget.userType,
+                            ),
+                          );
+                        }
                       },
                       buttonText: "تسجيل الدخول",
                     ),
@@ -151,7 +174,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context: context,
                                 route: AppRouter.register,
                                 extra: widget.userType,
-                                
                               );
                             },
                             child: Text(

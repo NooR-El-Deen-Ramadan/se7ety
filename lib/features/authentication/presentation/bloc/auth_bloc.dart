@@ -1,10 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:se7ety/features/authentication/data/models/doctor_model.dart';
-import 'package:se7ety/features/authentication/data/models/patient_model.dart';
-import 'package:se7ety/features/authentication/data/models/user_type_enum.dart';
+import 'package:se7ety/features/authentication/data/repo/auth_repo.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_events.dart';
 import 'package:se7ety/features/authentication/presentation/bloc/auth_states.dart';
 
@@ -26,50 +22,36 @@ class AuthBloc extends Bloc<AuthEvents, AuthStates> {
 
   register(RegisterEvent event, Emitter<AuthStates> emit) async {
     emit(AuthLoasdingState());
-    try {
-      var userCredentials = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordCController.text,
-          );
-      User user = userCredentials.user!;
-      user.updateDisplayName(userNameController.text);
+    var result = await AuthRepo.register(
+      userName: userNameController.text,
+      email: emailController.text,
+      password: passwordCController.text,
+      userType: event.userType,
+    );
 
-      if (event.userType == UserTypeEnum.doctor) {
-        var doctor = DoctorModel(
-          uid: user.uid,
-          email: emailController.text,
-          name: userNameController.text,
-        );
-        FirebaseFirestore.instance
-            .collection('doctors')
-            .doc(user.uid)
-            .set(doctor.toJson());
-      } else {
-        var patient = PatientModel(
-          uid: user.uid,
-          email: emailController.text,
-          name: userNameController.text,
-        );
-        FirebaseFirestore.instance
-            .collection('patients')
-            .doc(user.uid)
-            .set(patient.toJson());
-      }
-
-      emit(AuthSuccessState());
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        emit(AuthErrorState('كلمة المرور ضعيفة للغاية.'));
-      } else if (e.code == 'email-already-in-use') {
-        emit(AuthErrorState('هذا البريد الإلكتروني مستخدم بالفعل.'));
-      } else {
-        emit(AuthErrorState('حدث خطأ أثناء التسجيل.'));
-      }
-    } catch (e) {
-      emit(AuthErrorState("حدث خطأ ما. يرجى المحاولة مرة أخرى."));
-    }
+    result.fold(
+      (error) {
+        emit(AuthErrorState(error));
+      },
+      (success) {
+        emit(AuthSuccessState());
+      },
+    );
   }
 
-  login(LoginEvent event, Emitter<AuthStates> emit) async {}
+  login(LoginEvent event, Emitter<AuthStates> emit) async {
+    emit(AuthLoasdingState());
+    var result = await AuthRepo.login(
+      email: emailController.text,
+      password: passwordCController.text,
+    );
+    result.fold(
+      (error) {
+        emit(AuthErrorState(error));
+      },
+      (success) {
+        emit(AuthSuccessState());
+      },
+    );
+  }
 }
